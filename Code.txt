@@ -1,0 +1,72 @@
+% Read the color image
+originalColorImage = imread('old.jpg');
+
+% Convert to grayscale
+originalGrayImage = rgb2gray(originalColorImage);
+
+% Display the original grayscale image
+figure;
+subplot(2, 4, 1);
+imshow(originalGrayImage, 'InitialMagnification', 'fit');
+title('Original Grayscale Image');
+
+% Display statistics of the original image
+originalMean = mean2(originalGrayImage);
+originalStd = std2(double(originalGrayImage));
+originalMin = min(originalGrayImage(:));
+originalMax = max(originalGrayImage(:));
+disp('Original Image Statistics:');
+fprintf('Mean: %.2f, Std: %.2f, Min: %d, Max: %d\n', originalMean, originalStd, originalMin, originalMax);
+
+% Measure and display the execution time for the entire script
+totalStartTime = tic;
+
+% Denoise the image using median filtering
+denoisingStartTime = tic;
+denoisedImage = medfilt2(originalGrayImage);
+denoisingTime = toc(denoisingStartTime);
+
+% Display the denoised grayscale image
+subplot(2, 4, 2);
+imshow(denoisedImage, 'InitialMagnification', 'fit');
+title('Denoised Grayscale Image');
+
+% Display histogram before and after denoising
+subplot(2, 4, 3);
+imhist(originalGrayImage);
+title('Original Grayscale Histogram');
+
+subplot(2, 4, 4);
+imhist(denoisedImage);
+title('Denoised Grayscale Histogram');
+
+% Enhance the denoised image using histogram equalization
+enhancementStartTime = tic;
+enhancedImage = histeq(denoisedImage);
+enhancementTime = toc(enhancementStartTime);
+
+% Display the enhanced grayscale image
+subplot(2, 4, 5);
+imshow(enhancedImage, 'InitialMagnification', 'fit');
+title('Enhanced Grayscale Image');
+
+% Display the histogram of the enhanced image
+subplot(2, 4, 6);
+imhist(enhancedImage);
+title('Enhanced Grayscale Histogram');
+
+% Display statistics of the enhanced image
+enhancedMean = mean2(enhancedImage);
+enhancedStd = std2(double(enhancedImage));
+enhancedMin = min(enhancedImage(:));
+enhancedMax = max(enhancedImage(:));
+disp('Enhanced Image Statistics:');
+fprintf('Mean: %.2f, Std: %.2f, Min: %d, Max: %d\n', enhancedMean, enhancedStd, enhancedMin, enhancedMax);
+
+% Display execution times
+fprintf('Denoising Time: %.4f seconds\n', denoisingTime);
+fprintf('Enhancement Time: %.4f seconds\n', enhancementTime);
+
+% Display total execution time
+totalTime = toc(totalStartTime);
+fprintf('Total Execution Time: %.4f seconds\n', totalTime);
